@@ -6,7 +6,7 @@ SLATaskApp is a Mendix-based application I developed to manage Service Level Agr
 
 - **Platform**: Mendix Studio Pro 10.0.0
 - **Template**: Task & Planning
-- **Duration**: ~4 hours
+- **Duration**: ~12 hours
 - **Purpose**: Monitor SLA compliance, assign tasks to departments, and provide a dashboard for task and SLA management.
 
 ### Objectives
