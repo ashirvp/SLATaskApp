@@ -1,190 +1,132 @@
 # SLATaskApp
 
-SLATaskApp Project Documentation
-Project Overview
-I developed SLATaskApp, a Mendix-based application to streamline Service Level Agreement (SLA) management for an Internet Service Provider (ISP) company. Built using Mendix Studio Pro (version 10.0.0) and the Task & Planning app template, the app tracks SLA compliance and assigns tasks to responsible departments. I extended the template’s functionality to include a custom SLA Dashboard, replacing an outdated Excel-based process with a modern, user-friendly solution.
+SLATaskApp is a Mendix-based application I developed to manage Service Level Agreements (SLAs) for an Internet Service Provider (ISP). Built using Mendix Studio Pro (version 10.0.0) and the **Task & Planning** app template, the app tracks SLA compliance and assigns tasks to responsible departments. I extended the template with a custom SLA Dashboard, replacing an inefficient Excel-based process with a streamlined, user-friendly solution.
 
-Duration: Approximately 4 hours
-Platform: Mendix Studio Pro 10.0.0
-Template: Task & Planning
+## Project Overview
 
-Project Objectives
-My goal was to create an app that:
+- **Platform**: Mendix Studio Pro 10.0.0
+- **Template**: Task & Planning
+- **Duration**: ~4 hours
+- **Purpose**: Monitor SLA compliance, assign tasks to departments, and provide a dashboard for task and SLA management.
 
-Tracks whether SLAs are met for customer contracts, providing clear visibility for contract negotiations.
-Assigns tasks to departments and monitors their SLA status.
-Offers an intuitive SLA Dashboard to display task details and SLA outcomes.
-Enables filtering of tasks to focus on missed SLAs for quick action.
+### Objectives
 
-Use Case
-As an ISP, I needed a robust tool to monitor SLAs that specify service restoration times for customers. Previously managed via Excel, this process was inefficient. My app displays whether SLAs are achieved, identifies the responsible department for each task, and provides a centralized dashboard for task management. I chose the Task & Planning template for its task management foundation and customized it to meet SLA-specific requirements.
-Development Process
-1. Project Setup
-I kicked off the project by setting up SLATaskApp in the Mendix Portal, selecting the Task & Planning template as the foundation. I installed Mendix Studio Pro 10.0.0 and dove into the development environment to explore its capabilities.
+- Track whether SLAs are met for customer contracts to support pricing and negotiations.
+- Assign tasks to departments and display their SLA status.
+- Create an SLA Dashboard to visualize task details and SLA outcomes.
+- Enable filtering to focus on missed SLAs for quick resolution.
 
-Steps:
-Created SLATaskApp in the Mendix Portal and chose the Task & Planning template.
-Disabled app security (set to Off) to simplify development and testing.
-Familiarized myself with Studio Pro’s interface:
-App Explorer: Organized pages, domain model, microflows, and settings.
-Properties Pane: Adjusted element properties like layout and titles.
-Toolbox: Added widgets and tools to enhance pages.
-Menu Bar: Used for saving, running locally, and previewing the app.
-Dockable Panes: Monitored errors, changes, and console logs.
+### Use Case
 
+As an ISP, I needed a tool to monitor SLAs defining service restoration times for customers, previously tracked in Excel. SLATaskApp displays SLA compliance, identifies responsible departments, and centralizes task management. I used the **Task & Planning** template for its task management features and customized it for SLA-specific needs.
 
-Ran the app locally and tested the template by adding a task (“Develop Performance Presentation”) to confirm its functionality.
+## Features
 
+- **SLA Dashboard**: Displays tasks with their title, completion date, SLA status (Achieved/Missed), and department, with tabs for **All** tasks and **Missed** SLAs.
+- **Task Management**: Create, edit, and delete tasks with due dates, completion dates, and department assignments.
+- **Department Management**: Add and view departments, with tasks linked via a one-to-many association.
+- **Custom Logic**: Microflow to set SLA status based on completion vs. due dates, with validation for missing dates.
+- **Data Filtering**: Filter missed SLAs and sort by recent completion dates for prioritized action.
 
+## Development Process
 
-2. Creating the SLA Dashboard
-I designed a new SLA Dashboard page to serve as the app’s central hub for viewing task and SLA information, accessible from the navigation menu.
+### 1. Setup
+I created **SLATaskApp** in the Mendix Portal using the **Task & Planning** template and set up Mendix Studio Pro 10.0.0.
 
-Steps:
-Created a new page named SLA_Dashboard using the List template and Tasks_TopBar layout for a consistent look.
-Added a navigation menu item for the SLA Dashboard, placing it between Team and My Profile for easy access.
-Encountered an initial error due to an unconfigured entity, which I planned to resolve in the domain model phase.
+- Disabled security (set to **Off**) for development.
+- Explored Studio Pro’s interface (App Explorer, Properties Pane, Toolbox, Menu Bar, Dockable Panes).
+- Tested the template by adding a task (“Develop Performance Presentation”).
 
+### 2. SLA Dashboard
+I built an **SLA Dashboard** page for task and SLA visualization.
 
+- Created **SLA_Dashboard** (List template, Tasks_TopBar layout).
+- Added a navigation menu item between **Team** and **My Profile**.
+- Resolved an initial entity error in the next phase.
 
-3. Extending the Domain Model
-To support SLA tracking and department assignments, I extended the app’s domain model with new attributes, entities, and associations.
+### 3. Domain Model
+I extended the domain model to support SLA tracking.
 
-Steps:
-Modified the Task entity:
-Added SLADashboardStatus (Enumeration: SLA Achieved, SLA Missed) to track SLA outcomes.
-Added CompletionDate (Date and Time) to record task completion.
+- **Task Entity**:
+  - Added **SLADashboardStatus** (Enumeration: SLA Achieved, SLA Missed).
+  - Added **CompletionDate** (Date and Time).
+- **Department Entity**: Created with **Name** (String).
+- Added a one-to-many association (Department 1 : Task *).
+- Updated **TaskEdit** page with **CompletionDate** date picker and **Reference Selector** for departments.
 
+### 4. Data Connection
+I connected data to pages and added department management.
 
-Created a Department entity with a Name attribute (String) to store department details.
-Established a one-to-many association between Department (1) and Task (*), allowing one department to handle multiple tasks.
-Updated the TaskEdit page to include:
-A CompletionDate date picker, duplicated from the existing DueDate field.
-A Reference Selector widget to assign tasks to departments.
+- Linked **SLA_Dashboard** list view to **Task**, showing **Title**, **CompletionDate**, **SLADashboardStatus**, and **Department Name**.
+- Added a delete button (trash icon) for tasks.
+- Created **Department_Overview** (List template) and **Department_NewEdit** (Form vertical, popup) pages.
+- Configured an **Add** button to create **Department** objects.
+- Tested with departments (e.g., Implementation, Technical Support) and tasks (e.g., “Check network performance”).
 
+### 5. Custom Logic
+I extended the **SelectDoneStatus** microflow to automate SLA status.
 
+- Added a **Decision** to validate **CompletionDate** and **DueDate** (`$Task/CompletionDate != empty and $Task/DueDate != empty`).
+- Added a second **Decision** to check **CompletionDate** ≤ **DueDate**.
+- Set **SLADashboardStatus** to **SLA Achieved** (true) or **SLA Missed** (false).
+- Included an error message for missing dates.
+- Used **MxAssist Logic Bot** for microflow suggestions.
+- Tested with tasks to confirm SLA status updates.
 
+### 6. Data Filtering
+I enhanced the SLA Dashboard with filtered views.
 
+- Added a **Tab Container** with **Missed** and **All** tabs.
+- Constrained **Missed** tab to **SLADashboardStatus = SLA Missed**.
+- Sorted **Missed** tab by **CompletionDate** (Descending).
+- Verified **Missed** tab showed only SLA-missed tasks, while **All** showed all tasks.
 
-4. Connecting Data to Pages
-I connected the SLA Dashboard to the domain model and built additional pages to manage departments, ensuring seamless data display and interaction.
+## Technical Details
 
-Steps:
-Linked the SLA Dashboard’s list view to the Task entity, configuring it to display Title, CompletionDate, SLADashboardStatus, and Department Name.
-Added a delete button (trash icon) to allow users to remove unnecessary tasks.
-Created a Department_Overview page (List template) to list all departments.
-Built a Department_NewEdit page (Form vertical, popup layout) for adding and editing departments.
-Configured an Add button on the Department_Overview page to create new Department objects, resolving an error by passing the correct object to the popup page.
-Tested the app by:
-Adding departments (e.g., Implementation, Technical Support).
-Creating tasks (e.g., “Check network performance” assigned to Technical Support).
-Verifying the SLA Dashboard displayed tasks correctly and supported deletions.
+- **Security**: Off (development mode)
+- **Pages**: SLA_Dashboard, Department_Overview, Department_NewEdit, TaskEdit
+- **Domain Model**: Extended Task, new Department, one-to-many association
+- **Microflow**: Extended SelectDoneStatus
+- **Widgets**: List View, Tab Container, Reference Selector, Buttons, Date Picker
 
+## Challenges & Solutions
 
+- **Error on SLA Dashboard**: Resolved by linking list view to **Task** entity.
+- **Accurate SLA Status**: Added microflow decisions and tested extensively.
+- **Filtering Missed SLAs**: Used Tab Container to separate **Missed** and **All** views.
+- **Department Page Error**: Fixed by creating **Department** object before opening popup.
 
+## Future Improvements
 
+- Enable **Production** security with user roles.
+- Add charts to visualize SLA trends.
+- Implement deadline notifications.
+- Integrate with external systems (e.g., CRM).
+- Optimize for large datasets with query refinements.
 
-5. Adding Custom Logic
-I customized the SelectDoneStatus microflow to automate SLA status updates based on task completion dates, adding logic to validate inputs and set outcomes.
+## Installation & Setup
 
-Steps:
-Analyzed the SelectDoneStatus microflow, triggered by the Done button on the TaskEdit page, which originally set the task status to Done.
-Extended the microflow:
-Added a Decision activity to check if CompletionDate and DueDate are filled, using the expression $Task/CompletionDate != empty and $Task/DueDate != empty.
-Added a second Decision activity to compare CompletionDate ≤ DueDate.
-Configured the microflow to set SLADashboardStatus to SLA Achieved (true) or SLA Missed (false).
-Included a Show Message activity for the unhappy flow, alerting users to fill in both dates if missing.
+1. Install [Mendix Studio Pro 10.0.0](https://www.mendix.com/evaluation-guide/studio-pro).
+2. Clone this repository or import the `.mpk` file into Mendix.
+3. Open **SLATaskApp** in Studio Pro.
+4. Run locally and view in a browser.
+5. Test by adding tasks and departments, and navigating the SLA Dashboard.
 
+## Usage
 
-Leveraged MxAssist Logic Bot to streamline microflow development with AI-driven recommendations.
-Tested the microflow by updating tasks:
-Set a task with CompletionDate before DueDate to confirm SLA Achieved.
-Set another with CompletionDate after DueDate to verify SLA Missed.
-Checked the SLA Dashboard to ensure accurate status updates.
+- **Add Departments**: Use **Manage Department** to create departments (e.g., Technical Support).
+- **Create Tasks**: Add tasks via the homepage, assigning departments and dates.
+- **Monitor SLAs**: Check the **SLA Dashboard** for task statuses, using **Missed** tab for priority tasks.
+- **Edit/Delete**: Update tasks on **TaskEdit** page or delete via the dashboard.
 
+## Lessons Learned
 
+- Accelerated development with Mendix templates.
+- Mastered domain model extensions and associations.
+- Implemented business logic via microflows.
+- Improved UX with filtering and navigation.
 
+## Conclusion
 
+I built **SLATaskApp** to address the ISP’s SLA management needs, transforming the **Task & Planning** template into a powerful tool. The app delivers clear SLA tracking, department assignments, and filtered dashboards, surpassing the old Excel process. This project sharpened my Mendix skills, and I’m eager to explore advanced features in future low-code projects.
 
-6. Filtering Data
-To meet user requirements for focusing on missed SLAs, I enhanced the SLA Dashboard with filtered views and sorted data.
-
-Steps:
-Added a Tab Container to the SLA Dashboard, creating Missed and All tabs.
-Moved the existing list view to the All tab and duplicated it for the Missed tab.
-Configured the Missed tab’s list view with a data source constraint: SLADashboardStatus = SLA Missed.
-Sorted the Missed tab by CompletionDate (Descending) to show the most recent missed SLAs first.
-Tested the app by:
-Adding tasks with mixed SLA outcomes (some met, some missed).
-Confirming the Missed tab displayed only SLA-missed tasks, sorted correctly.
-Verifying the All tab showed all tasks without filtering.
-
-
-
-
-
-Final Outcome
-I successfully delivered SLATaskApp, a fully functional SLA management tool that:
-
-Tracks SLA compliance with a custom SLA Dashboard, displaying task details and statuses.
-Assigns tasks to departments and updates SLA outcomes automatically.
-Filters tasks to highlight missed SLAs in a dedicated tab, sorted by recent completion dates.
-Provides an intuitive interface for managing tasks and departments, improving efficiency over the previous Excel process.
-
-Technical Details
-
-Platform: Mendix Studio Pro 10.0.0
-Template: Task & Planning
-Security: Set to Off for development simplicity
-Key Components:
-Pages: SLA_Dashboard, Department_Overview, Department_NewEdit, TaskEdit
-Domain Model: Extended Task entity, new Department entity, one-to-many association
-Microflow: Extended SelectDoneStatus with decision and message activities
-Widgets: List View, Tab Container, Reference Selector, Buttons, Date Picker
-
-
-Tools Used:
-Mendix Portal for app creation and management.
-Studio Pro for development and local testing.
-MxAssist Logic Bot for microflow optimization.
-
-
-
-Challenges and Solutions
-
-Challenge: The SLA Dashboard initially showed an error due to an unconfigured list view entity.
-Solution: Connected the list view to the Task entity and verified data display.
-
-
-Challenge: Ensuring accurate SLA status updates required precise microflow logic.
-Solution: Added decision activities to validate dates and set statuses, with thorough testing to confirm outcomes.
-
-
-Challenge: Users needed a way to focus on missed SLAs without losing access to all tasks.
-Solution: Implemented a Tab Container with a constrained Missed tab and an unfiltered All tab.
-
-
-Challenge: The Department_NewEdit page had an error due to missing object context.
-Solution: Configured the Add button to create a new Department object before opening the popup.
-
-
-
-Future Improvements
-To enhance SLATaskApp, I plan to:
-
-Enable Production security with user authentication and role-based access.
-Add visualizations (e.g., charts or graphs) to the SLA Dashboard for SLA trend analysis.
-Implement notifications to alert users about approaching SLA deadlines.
-Explore Mendix integrations for connecting with external systems, such as customer management tools.
-Optimize performance for larger datasets by refining queries and indexing.
-
-Lessons Learned
-This project deepened my understanding of Mendix’s low-code platform, particularly:
-
-Leveraging templates to accelerate development while customizing for specific needs.
-Building and extending domain models to support complex data relationships.
-Using microflows to implement business logic with decision-based workflows.
-Enhancing user experience through data filtering and intuitive navigation.
-
-Conclusion
-I built SLATaskApp from the ground up, transforming the Task & Planning template into a tailored SLA management solution. The app meets the ISP’s requirements by providing clear SLA tracking, department assignments, and filtered views for missed SLAs. The development process honed my skills in Mendix Studio Pro, from page design to microflow logic, and I’m excited to apply these skills to future projects. SLATaskApp is a solid foundation for further enhancements and demonstrates the power of low-code development for solving real-world business challenges.
